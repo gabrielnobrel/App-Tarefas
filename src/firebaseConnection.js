@@ -2,14 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 let firebaseConfig = {
-  apiKey: "AIzaSyDjMEHKX3q-qUXUjOXiGyttymF__Fu7y7Q",
-  authDomain: "meuapp-61d18.firebaseapp.com",
-  databaseURL: "https://meuapp-61d18-default-rtdb.firebaseio.com",
-  projectId: "meuapp-61d18",
-  storageBucket: "meuapp-61d18.appspot.com",
-  messagingSenderId: "816838169373",
-  appId: "1:816838169373:web:1b6f897b1a934e33b307f4",
-  measurementId: "G-R4L4S2SS8E",
+  apiKey: "AIzaSyA9_T7r1hQmqcu-yKwB9CepcOoXb4FFTvo",
+  authDomain: "chatgpt-917f8.firebaseapp.com",
+  projectId: "chatgpt-917f8",
+  storageBucket: "chatgpt-917f8.appspot.com",
+  messagingSenderId: "228379907384",
+  appId: "1:228379907384:web:31563621a27363b7f15dcd",
 };
 
 // if (!firebase.apps.length) {

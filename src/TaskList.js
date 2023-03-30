@@ -1,16 +1,29 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function TaskList({ data }) {
+export default function TaskList({ data, deleteItem, editItem }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={{ marginRight: 10 }}>
-        <Ionicons name="trash" color="#FFF" size={20} />
+        <Ionicons
+          name="trash"
+          color="#FFF"
+          size={20}
+          onPress={() => deleteItem(data.key)}
+        />
       </TouchableOpacity>
 
       <View style={{ paddingRight: 15 }}>
-        <Text style={{ color: "#FFF", paddingRight: 10 }}>{data.nome}</Text>
+        <TouchableWithoutFeedback onPress={() => editItem(data)}>
+          <Text style={{ color: "#FFF", paddingRight: 10 }}>{data.nome}</Text>
+        </TouchableWithoutFeedback>
       </View>
     </View>
   );

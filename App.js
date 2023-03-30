@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,16 +10,59 @@ import {
 } from "react-native";
 import database from "./src/firebaseConnection";
 
+import {
+  ref,
+  push,
+  set,
+  onValue,
+  remove,
+  child,
+  update,
+} from "firebase/database";
+
 import TaskList from "./src/TaskList";
+import { FirebaseError } from "firebase/app";
 
 console.disableYellowBox = true;
 
 export default function App() {
+  const inputRef = useRef(null);
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [key, setKey] = useState("");
+
+  useEffect(() => {
+    async function loadTasks() {
+      const tasksRef = ref(database, "tarefas");
+      await onValue(tasksRef, (snapshot) => {
+        const tasksList = [];
+        snapshot.forEach((childSnapshot) => {
+          tasksList.push({
+            key: childSnapshot.key,
+            nome: childSnapshot.val().nome,
+          });
+        });
+        setTasks(tasksList);
+      });
+    }
+
+    loadTasks();
+  }, []);
 
   async function handleAdd() {
     if (newTask !== "") {
+      if (key !== "") {
+        const tarefas = ref(database, "tarefas");
+        await update(tarefas, {
+          nome: newTask,
+        });
+
+        Keyboard.dismiss();
+        setNewTask("");
+        setKey("");
+        return;
+      }
+
       // let tarefas = await database.database().ref("tarefas");
       // let chave = tarefas.push().key;
 
@@ -27,9 +70,26 @@ export default function App() {
       //   nome: newTask,
       // });
 
+      const tarefas = ref(database, "tarefas");
+      const chave = push(tarefas);
+      await set(chave, {
+        nome: newTask,
+      });
+
       Keyboard.dismiss();
       setNewTask("");
     }
+  }
+
+  async function handleDelete(key) {
+    const tarefas = ref(database, "tarefas");
+    await remove(child(tarefas, key));
+  }
+
+  function handleEdit(data) {
+    setNewTask(data.nome);
+    setKey(data.key);
+    inputRef.current.focus();
   }
 
   return (
@@ -43,6 +103,7 @@ export default function App() {
             setNewTask(texto);
           }}
           value={newTask}
+          ref={inputRef}
         />
 
         <TouchableOpacity style={styles.buttonAdd} onPress={handleAdd}>
@@ -53,7 +114,13 @@ export default function App() {
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.key}
-        renderItem={({ item }) => <TaskList data={item} />}
+        renderItem={({ item }) => (
+          <TaskList
+            data={item}
+            deleteItem={handleDelete}
+            editItem={handleEdit}
+          />
+        )}
       />
     </View>
   );
