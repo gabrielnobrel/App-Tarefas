@@ -8,8 +8,6 @@ import {
   FlatList,
   Keyboard,
 } from "react-native";
-import database from "./src/firebaseConnection";
-
 import {
   ref,
   push,
@@ -19,9 +17,10 @@ import {
   child,
   update,
 } from "firebase/database";
+import { AntDesign } from "@expo/vector-icons";
 
+import database from "./src/firebaseConnection";
 import TaskList from "./src/TaskList";
-import { FirebaseError } from "firebase/app";
 
 console.disableYellowBox = true;
 
@@ -51,6 +50,7 @@ export default function App() {
 
   async function handleAdd() {
     if (newTask !== "") {
+      //Edição de tarefa
       if (key !== "") {
         const tarefas = ref(database, "tarefas");
         await update(child(tarefas, key), {
@@ -92,8 +92,31 @@ export default function App() {
     inputRef.current.focus();
   }
 
+  function cancelEdit() {
+    setKey("");
+    setNewTask("");
+    Keyboard.dismiss();
+  }
+
   return (
     <View style={styles.container}>
+      {key.length > 0 && (
+        <View style={{ flexDirection: "row", marginBottom: 8 }}>
+          <TouchableOpacity>
+            <AntDesign
+              name="closecircleo"
+              size={20}
+              color="#ff0000"
+              onPress={cancelEdit}
+            />
+          </TouchableOpacity>
+
+          <Text style={{ marginLeft: 5, color: "#FF0000" }}>
+            Você estáditando uma tarefa
+          </Text>
+        </View>
+      )}
+
       <View style={styles.containerTask}>
         <TextInput
           style={styles.input}
