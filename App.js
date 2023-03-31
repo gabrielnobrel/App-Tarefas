@@ -53,7 +53,7 @@ export default function App() {
     if (newTask !== "") {
       if (key !== "") {
         const tarefas = ref(database, "tarefas");
-        await update(tarefas, {
+        await update(child(tarefas, key), {
           nome: newTask,
         });
 
